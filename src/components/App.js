@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3'
-import './App.css';
 import Color from '../abis/Color.json'
 
 const App = () => {
-
-  useEffect(async () => {
-    await loadWeb3()
-    await loadBlockchainData()
-  },[colors])
-
   const [account, setAccount] = useState('');
   const [contract, setContract] = useState(null);
-  const [totalSupply, setTotalSupply] = useState(0);
   const [colors, setColors] = useState([])
   const [colorValue, setColorValue] = useState('')
+
+  useEffect(() => {
+    const load = async () => {
+      await loadWeb3();
+      await loadBlockchainData();
+    }
+    load();
+  },[colors])
 
   const loadWeb3 = async () => {
     if (window.ethereum) {
@@ -43,8 +43,6 @@ const App = () => {
       const contract = new web3.eth.Contract(abi, address)
       setContract(contract)
       const totalSupply = await contract.methods.totalSupply().call()
-      console.log("totalSupply", totalSupply)
-      setTotalSupply(totalSupply)
       // Load Colors
       const tempColors = []
       for (var i = 1; i <= totalSupply; i++) {
